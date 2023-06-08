@@ -41,14 +41,16 @@ document.querySelector('p:last-of-type').classList.add('hidden');
 document.querySelector('input:last-of-type').classList.add('hidden');
 
 let data = {};
-values.forEach(e => {data[e]})
-const inputs = document.querySelectorAll('input');
+values.forEach(e => {data[e]});
+let inputs = Array.from(document.querySelectorAll('input[type="text"]'));
+// remove hiden input from nodeList
+inputs.pop()
 inputs.forEach(e => {e.addEventListener('change', createData)});
 
 window.onload = loadOrders;
 
 function loadOrders() {
-    const orders = document.querySelector('.orders');
+    const orders = document.querySelector('.orders')
     let ordersData;
     let imagesSrc = [];
     fetch('data.json')
@@ -61,7 +63,10 @@ function loadOrders() {
         let html = '<h1>Granit form</h1>';
         if (ordersData !== undefined) {
             ordersData.forEach((e, i) => {
-                imagesSrc = e.fileNames.split(',');
+                if (e.fileNames) {
+                    imagesSrc = e.fileNames.split(',');
+                }
+                
                 html += `
                 <div class="order__item">
                     <div class="order__item-header">
@@ -152,12 +157,13 @@ document.querySelector('#send').addEventListener('click', (e) => {
         }
         if (!isNull) {responceText.push(data)
         fetch('/data', {method: 'POST', body: JSON.stringify(responceText)})
-        // .then(location.reload())
-        console.log(responceText);}
+        .then(location.reload())
+        }
     }
 });
 
 
+// add textarea value in data
 const textarea = document.querySelector('textarea').addEventListener('input', e => {
     data.description = e.target.value;
 })
