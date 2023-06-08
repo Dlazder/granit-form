@@ -152,7 +152,7 @@ document.querySelector('#send').addEventListener('click', (e) => {
         }
         if (!isNull) {responceText.push(data)
         fetch('/data', {method: 'POST', body: JSON.stringify(responceText)})
-        .then(location.reload())
+        // .then(location.reload())
         console.log(responceText);}
     }
 });
