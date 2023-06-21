@@ -30,9 +30,10 @@ values.forEach((e, i) => {
 form.innerHTML += `
 Описание деталей:<br><br>
 <textarea rows="10" cols="40"></textarea>
+<div class="img-container"></div>
 <div class="file-form">
-<p>Чтобы загрузить файлы перетащите их в эту область или нажмите на прямоугольник. Все необходимые файлы необходимо выбирать сразу же зажав Ctrl на пк, или зажав пальцем на телкфоне</p>
-    <input type="file" multiple>
+<p>Чтобы загрузить файлы перетащите их в эту область или нажмите на прямоугольник.</p>
+<input type="file" multiple>
 </div>
 `;
 form.innerHTML += '<button id="send">Отправить</button>';
@@ -80,7 +81,7 @@ function loadOrders() {
                         ${values.map((element, index) => {return `<p>${element[0]} <span class="mark">${Object.values(e)[index]}</span></p>`}).join('')}
                         Описание: ${e.description}
                         <div class="images">
-                            ${imagesSrc.map((e) => {return `<img src="/images/${e}">`}).join('')}
+                            ${imagesSrc.map((e) => {return `<img src="./images/${e}">`}).join('')}
                         </div>
                     </div>
                 </div>`;
@@ -136,6 +137,7 @@ function createData() {
     }
 }
 
+// send data
 document.querySelector('#send').addEventListener('click', (e) => {
     e.preventDefault()
     let responceText = [];
@@ -148,34 +150,32 @@ document.querySelector('#send').addEventListener('click', (e) => {
     function send() {
         // inputs validation
         let isNull = false;
-        for (let i = 0; i< inputs.length; i++) {
-            if (!inputs[i].value) {
-                alert(`Не все поля заполнены! Заполните поле №${i+1}`);
-                isNull = true;
-                break;
-            }
-        }
-        if (!isNull) {responceText.push(data)
-        fetch('/data', {method: 'POST', body: JSON.stringify(responceText)})
-        .then(location.reload())
+        // for (let i = 0; i< inputs.length; i++) {
+        //     if (!inputs[i].value) {
+        //         alert(`Не все поля заполнены! Заполните поле №${i+1}`);
+        //         isNull = true;
+        //         break;
+        //     }
+        // }
+        if (!isNull) {
+            responceText.push(data)
+            fetch('/data', {method: 'POST', body: JSON.stringify(responceText)})
+            .then(location.reload())
         }
     }
 });
 
-
-// add textarea value in data
+// add textarea value in data on input
 const textarea = document.querySelector('textarea').addEventListener('input', e => {
     data.description = e.target.value;
 })
 
-
-
 const fileInput = document.querySelector('input[type="file"]');
+
+let fileNames = [];
 
 function uploadFile(e) {
     e.preventDefault();
-    let images = [];
-    let fileNames = [];
 
     for (let i = 0; i < fileInput.files.length; i++) {
         const file = fileInput.files[i];
@@ -185,17 +185,37 @@ function uploadFile(e) {
         reader.onload = () => {
             const base64Image = reader.result.split(',')[1];
             const fileName = file.name;
-            images.push({base64Image, fileName});
             fileNames.push(fileName);
             document.querySelector('input:last-of-type').value = fileNames;
-            data.fileNames = document.querySelector('input:last-of-type').value;
+            data.fileNames = fileNames.toString();
 
             fetch('/file', {method: 'POST',
             body: JSON.stringify({fileName, base64Image})})
-            .then(res => alert(`Выбранные вами файлы (${i}) успешно загруженны!`))
+            .then(res => {
+                const div = document.createElement('div');
+                div.className = 'img__item';
+                div.dataset.image = fileName;
+                div.innerHTML = `
+                <img src="${reader.result}"></img>
+                <span class="delete-btn"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16" class=""><path fill-rule="evenodd" d="M6.586 8L4.293 5.707a.999.999 0 111.414-1.414L8 6.586l2.293-2.293a1 1 0 011.414 1.414L9.414 8l2.293 2.293a1 1 0 01-1.414 1.414L8 9.414l-2.293 2.293a1 1 0 01-1.414-1.414L6.586 8z"></path></svg></span>
+                `;
+                div.querySelector('.delete-btn').addEventListener('click', () => {
+                    fetch('/delete-file', {method: 'POST', body: div.dataset.image})
+                    div.remove()
+                    fileNames.pop()
+                    let newFileNames = [];
+                    document.querySelectorAll('.img__item').forEach((e) => {
+                        newFileNames.push(e.dataset.image);
+                    })
+                    fileNames = newFileNames;
+                    data.fileNames = fileNames.toString();
+                    document.querySelector('input.hidden').value = fileNames;
+
+                });
+                document.querySelector('.img-container').appendChild(div);
+            })
             .catch(err => console.error(err));
         }
-
     }
 }
 

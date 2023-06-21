@@ -159,6 +159,59 @@ button {
 
 
 
+
+
+/* ............................... */
+
+.img-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.img__item img {
+    width: 150px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.img__item {
+    border-radius: 10px;
+    width: 150px;
+    aspect-ratio: 1/1;
+    position: relative;
+    margin: 10px;
+}
+
+.img__item:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    background-color: rgb(44, 45, 46);
+    border-radius: 0 5px 0 5px;
+    opacity: 0;
+    cursor: pointer;
+    transition: .1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.delete-btn svg {
+    fill: #fff;
+}
+
+
+
+
+/* Media */
+
 .mark {
     background: var(--mark);
 }
@@ -182,6 +235,7 @@ button {
         margin-bottom: -10px;
     }
 }
+
 @media (max-width: 320px) {
     h2 {
         font-size: 13px;
