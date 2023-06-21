@@ -41,8 +41,23 @@ http.createServer((request, responce) => {
         fs.writeFile('./images/' + fileName, file, (err) => {
           if (err) throw err;
           console.log('The file has been saved!');
+          responce.end()
         });
     });
+  }
+
+  if (request.url === '/delete-file' && request.method === 'POST') {
+    let data = '';
+    request.on('data', (chunk) => {
+        data += chunk;
+    })
+
+    request.on('end', () => {
+        fs.unlink('./images/' + data, (err) => {
+            if (err) console.error(err)
+            else console.log('./images/' + data, 'has been removed!');
+        })
+    })
   }
   
 }).listen(3000, () => console.log('Сервер запущен: http://localhost:3000/index.html'));
