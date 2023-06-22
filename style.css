@@ -125,9 +125,8 @@ button {
 .file-form p {
     position: absolute;
     width: 100%;
-    max-width: 500px;
     height: 100%;
-    top: 0;
+    top: 20%;
     text-align: center;
     line-height: 2;
     color: #ffffff;
