@@ -150,13 +150,13 @@ document.querySelector('#send').addEventListener('click', (e) => {
     function send() {
         // inputs validation
         let isNull = false;
-        // for (let i = 0; i< inputs.length; i++) {
-        //     if (!inputs[i].value) {
-        //         alert(`Не все поля заполнены! Заполните поле №${i+1}`);
-        //         isNull = true;
-        //         break;
-        //     }
-        // }
+        for (let i = 0; i< inputs.length; i++) {
+            if (!inputs[i].value) {
+                alert(`Не все поля заполнены! Заполните поле №${i+1}`);
+                isNull = true;
+                break;
+            }
+        }
         if (!isNull) {
             responceText.push(data)
             fetch('/data', {method: 'POST', body: JSON.stringify(responceText)})
