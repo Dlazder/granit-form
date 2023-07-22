@@ -40,6 +40,7 @@ http.createServer((request, responce) => {
       const file = Buffer.from(base64Image, 'base64');
         fs.writeFile('./images/' + fileName, file, (err) => {
           if (err) throw err;
+          responce.statusCode = 200;
           console.log('The file has been saved!');
           responce.end()
         });
